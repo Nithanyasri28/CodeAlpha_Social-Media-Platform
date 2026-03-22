@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+.edit-container{
+display:flex;
+justify-content:center;
+align-items:center;
+margin-top:40px;
+}
+
+.edit-card{
+width:420px;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 8px 20px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.edit-card h2{
+margin-bottom:20px;
+color:#333;
+}
+
+/* Profile Image */
+.profile-preview{
+width:100px;
+height:100px;
+border-radius:50%;
+object-fit:cover;
+margin-bottom:15px;
+border:3px solid #2d6cdf;
+}
+
+/* Input fields */
+.form-group{
+margin-bottom:15px;
+text-align:left;
+}
+
+.form-group label{
+display:block;
+margin-bottom:5px;
+font-weight:500;
+}
+
+.form-group textarea,
+.form-group input{
+width:100%;
+padding:10px;
+border-radius:8px;
+border:1px solid #ddd;
+outline:none;
+}
+
+.form-group textarea:focus,
+.form-group input:focus{
+border-color:#2d6cdf;
+}
+
+/* Button */
+.save-btn{
+width:100%;
+padding:10px;
+background:#2d6cdf;
+color:white;
+border:none;
+border-radius:25px;
+font-size:16px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.save-btn:hover{
+background:#1b4fbf;
+}
+
+</style>
+
+<div class="edit-container">
+
+<div class="edit-card">
+
+<h2>Edit Profile</h2>
+
+<!-- Profile Preview -->
+{% if profile.profile_pic %}
+<img src="{{ profile.profile_pic.url }}" class="profile-preview">
+{% else %}
+<img src="https://via.placeholder.com/100" class="profile-preview">
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<div class="form-group">
+<label>Bio</label>
+<textarea name="bio" rows="3">{{ profile.bio }}</textarea>
+</div>
+
+<div class="form-group">
+<label>Profile Picture</label>
+<input type="file" name="profile_pic">
+</div>
+
+<button type="submit" class="save-btn">💾 Save Changes</button>
+
+</form>
+
+</div>
+
+</div>
+
+{% endblock %}

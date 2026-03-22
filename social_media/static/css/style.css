@@ -1,0 +1,11 @@
+/* Post Image */
+
+.post-image{
+width:100%;
+max-width:500px;
+height:350px;
+object-fit:cover;
+border-radius:10px;
+display:block;
+margin:auto;
+}

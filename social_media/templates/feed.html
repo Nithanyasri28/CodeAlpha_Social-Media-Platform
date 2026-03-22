@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+/* Feed Title */
+.feed-title{
+font-size:28px;
+margin-bottom:20px;
+color:#333;
+text-align:center;
+}
+
+/* Search Result Text */
+.search-text{
+text-align:center;
+margin-bottom:20px;
+color:#666;
+}
+
+/* Feed container */
+.feed-container{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:30px;
+}
+
+/* Post card */
+.card{
+width:520px;
+background:#ffffff;
+border-radius:12px;
+box-shadow:0 6px 15px rgba(0,0,0,0.1);
+padding:15px;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+}
+
+/* Header */
+.post-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+}
+
+/* Username */
+.username{
+font-size:18px;
+color:#444;
+margin:0;
+}
+
+/* Follow Button */
+.follow-btn{
+background:#2d6cdf;
+color:white;
+padding:5px 12px;
+border-radius:20px;
+text-decoration:none;
+font-size:14px;
+}
+
+.follow-btn:hover{
+background:#1b4fbf;
+}
+
+/* Delete Button */
+.delete-btn{
+background:#ff4d4d;
+color:white;
+padding:5px 10px;
+border-radius:20px;
+text-decoration:none;
+font-size:13px;
+margin-left:5px;
+}
+
+.delete-btn:hover{
+background:#cc0000;
+}
+
+/* Post Media */
+.post-image{
+width:100%;
+height:350px;
+object-fit:cover;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+/* Caption */
+.caption{
+font-size:15px;
+margin-bottom:10px;
+}
+
+/* Like Button */
+.like-btn{
+text-decoration:none;
+font-size:15px;
+background:#ff4d6d;
+color:white;
+padding:6px 12px;
+border-radius:20px;
+display:inline-block;
+}
+
+.like-btn:hover{
+background:#e63950;
+}
+
+/* Likes Count */
+.likes{
+font-size:14px;
+margin-top:5px;
+color:#555;
+}
+
+/* Comment Text */
+.comment{
+font-size:14px;
+margin:5px 0;
+}
+
+/* Comment Form */
+.comment-form{
+display:flex;
+margin-top:10px;
+}
+
+.comment-form input{
+flex:1;
+padding:8px;
+border-radius:6px;
+border:1px solid #ddd;
+}
+
+.comment-form button{
+padding:8px 12px;
+background:#4a6cf7;
+border:none;
+color:white;
+border-radius:6px;
+margin-left:5px;
+cursor:pointer;
+}
+
+.comment-form button:hover{
+background:#2f54eb;
+}
+
+</style>
+
+<h2 class="feed-title">Social Feed</h2>
+
+{% if query %}
+<p class="search-text">Results for "<b>{{ query }}</b>"</p>
+{% endif %}
+
+{% if query and posts|length == 0 %}
+<p class="search-text">No results found</p>
+{% endif %}
+
+<div class="feed-container">
+
+{% for post in posts %}
+
+<div class="card">
+
+<!-- Header -->
+<div class="post-header">
+
+<div style="display:flex; align-items:center; gap:10px;">
+
+<h3 class="username">{{ post.user.username }}</h3>
+
+</div>
+
+<div>
+
+{% if request.user != post.user %}
+<a href="/follow/{{ post.user.id }}/" class="follow-btn">
+    {% if post.user.id in following_users %}
+        Unfollow
+    {% else %}
+        Follow
+    {% endif %}
+</a>
+{% endif %}
+
+{% if request.user == post.user %}
+<a href="/delete/{{ post.id }}/" class="delete-btn">
+🗑 Delete
+</a>
+{% endif %}
+
+</div>
+
+</div>
+
+<!-- SAFE MEDIA DISPLAY -->
+{% if post.image %}
+    <img src="{{ post.image.url }}" class="post-image">
+{% elif post.video %}
+    <video class="post-image" controls>
+        <source src="{{ post.video.url }}">
+    </video>
+{% else %}
+    <p style="text-align:center; color:gray;">No media uploaded</p>
+{% endif %}
+
+<p class="caption">{{ post.caption }}</p>
+
+<a href="/like/{{ post.id }}/" class="like-btn">❤️ Like</a>
+
+<p class="likes">{{ post.total_likes }} Likes</p>
+
+<hr>
+
+<h4>Comments</h4>
+
+{% for comment in post.comments.all %}
+<p class="comment">
+<b>{{ comment.user.username }}</b>: {{ comment.text }}
+</p>
+{% empty %}
+<p class="comment">No comments yet</p>
+{% endfor %}
+
+<form method="POST" action="/comment/{{ post.id }}/" class="comment-form">
+{% csrf_token %}
+<input type="text" name="comment" placeholder="Write a comment..." required>
+<button type="submit">Post</button>
+</form>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

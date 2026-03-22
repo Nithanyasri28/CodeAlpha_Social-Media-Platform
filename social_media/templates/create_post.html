@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.create-container{
+display:flex;
+justify-content:center;
+align-items:center;
+height:85vh;
+}
+
+.create-card{
+width:480px;
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 8px 25px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.create-title{
+font-size:24px;
+margin-bottom:20px;
+color:#333;
+}
+
+.upload-box{
+border:2px dashed #ccc;
+padding:20px;
+border-radius:10px;
+cursor:pointer;
+margin-bottom:15px;
+transition:0.3s;
+}
+
+.upload-box:hover{
+border-color:#2d6cdf;
+background:#f8f9ff;
+}
+
+.file-input{
+display:none;
+}
+
+.preview{
+width:100%;
+max-height:300px;
+border-radius:10px;
+margin-bottom:15px;
+display:none;
+object-fit:cover;
+}
+
+.caption-box{
+width:100%;
+padding:10px;
+border-radius:8px;
+border:1px solid #ddd;
+margin-bottom:15px;
+resize:none;
+}
+
+.post-btn{
+width:100%;
+padding:12px;
+background:#2d6cdf;
+color:white;
+border:none;
+border-radius:25px;
+font-size:16px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.post-btn:hover{
+background:#1b4fbf;
+}
+
+.upload-text{
+color:#777;
+font-size:14px;
+}
+</style>
+
+<div class="create-container">
+<div class="create-card">
+
+<h2 class="create-title">📸 Create Post</h2>
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<label class="upload-box">
+    <p class="upload-text">Click to upload Image / Video</p>
+
+    <!-- ✅ KEEP THIS NAME -->
+    <input type="file" name="media" accept="image/*,video/*" 
+           class="file-input" onchange="previewMedia(event)" required>
+</label>
+
+<img id="imagePreview" class="preview">
+<video id="videoPreview" class="preview" controls></video>
+
+<textarea name="caption" class="caption-box" placeholder="Write a caption..."></textarea>
+
+<button type="submit" class="post-btn">🚀 Post</button>
+
+</form>
+
+</div>
+</div>
+
+<script>
+function previewMedia(event){
+const file = event.target.files[0];
+const imagePreview = document.getElementById('imagePreview');
+const videoPreview = document.getElementById('videoPreview');
+
+if(file){
+    const fileType = file.type;
+
+    if(fileType.startsWith('image')){
+        imagePreview.src = URL.createObjectURL(file);
+        imagePreview.style.display = 'block';
+        videoPreview.style.display = 'none';
+    }
+    else if(fileType.startsWith('video')){
+        videoPreview.src = URL.createObjectURL(file);
+        videoPreview.style.display = 'block';
+        imagePreview.style.display = 'none';
+    }
+}
+}
+</script>
+
+{% endblock %}
